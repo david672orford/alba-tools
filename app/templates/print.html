@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Alba Utilities: Reformat</title>
+<link rel="stylesheet" href="//unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+<style>
+* {
+	box-sizing: border-box;
+	}
+
+@page {
+	size: 11.0in 8.5in;
+	margin: 0;
+	}
+
+HTML, BODY {
+	margin: 0;
+	padding: 0;
+	}
+BODY {
+	font-size: 10pt;
+	}
+
+/* Pages */
+DIV.page {
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	page-break-after: always;
+	height: 8.0in;
+	margin: .25in;
+	}
+DIV.header, DIV.footer {
+	display: flex;
+	justify-content: space-between;
+	margin: 0 -.5em;
+	}
+DIV.header > SPAN, DIV.footer > SPAN {
+	margin: 0 .5em;
+	}
+DIV.footer {
+	font-weight: bold;
+	}
+DIV.main {
+	flex-grow: 1;
+	}
+
+/* Territory map */
+#map {
+	border: thin solid black;
+	width: 100%;
+	height: 100%;
+	}
+.location-icon {
+	width: 24px !important;
+	height: 24px !important;
+	margin-left: -12px;
+	margin-top: -12px;
+	border-radius: 18px;
+	border: 2px solid #3F51B5;
+	text-align: center;
+	color: #3F51B5;
+	background-color: #fff;
+	font-size: 16px;
+	}
+
+/* Territory address tables */
+TABLE {
+	border-collapse: collapse;
+	width: 100%;
+	height: 100%;
+	}
+TH {
+	font-weight: bold;
+	}
+TH, TD {
+	border: thin solid black;
+	padding: .1em .4em;
+	text-align: left;
+	white-space: nowrap;
+	width: 0;
+	}
+TH:last-child, TH:last-child {
+	width: 50%;
+	}
+
+</style>
+</head>
+<body>
+
+{% macro header(page_number) %}
+	<div class="header">
+		<span><b>Участок:</b> {{ territory.number }}</span>
+		<span><b>Количество имён:</b> {{ territory.addresses|length }}</span>
+	</div>
+{% endmacro %}
+
+{% macro footer(page_number) %}
+	<div class="footer">
+		<span>{{ page_number }} из {{ territory.npages() + 1 }}</span>
+		<span>{{ territory.description }}</span>
+	</div>
+{% endmacro %}
+
+<div class="page">
+	{{ header(1) }}
+	<div class="main">
+		<div id="map"></div>
+	</div>
+	{{ footer(1) }}
+</div>
+
+{% for page in territory.pages() %}
+<div class="page">
+	{{ header(loop.index + 1) }}
+	<div class="main">
+	<table>
+		<thead>
+			<tr>
+				<th>X</th>
+				<th>Status</th>
+				<th>ФИО</th>
+				<th>Улица</th>
+				<th>Дом</th>
+				<th>Квар.</th>
+				<th>Город</th>
+				<th>Индекс</th>
+				<th>Телефон</th>
+				<th>Завметки</th>
+			</tr>
+		</thead>
+		<tbody>
+			{% for address in page %}
+			<tr>
+				<th>{{address.marker}}</td>
+				<th>{{address.status}}</td>
+				<td>{{address.name}}</td>
+				<td>{{address.street}}</td>
+				<td>{{address.house_number}}</td>
+				<td>{{address.apartment}}</td>
+				<td>{{address.city}}, {{address.state}}</td>
+				<td>{{address.postal_code}}</td>
+				<td>{{address.phone}}</td>
+				<td>{{address.notes}}</td>	
+			</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+	</div>
+	{{ footer(loop.index + 1) }}
+</div>
+{% endfor %}
+
+<script src="//unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+<script type="text/javascript">
+    var map = L.map('map', {
+		zoomSnap: 0.25,
+		}).setView([42.12, -72.75], 16);
+
+	map.dragging.disable();
+	map.touchZoom.disable();
+	map.doubleClickZoom.disable();
+	map.scrollWheelZoom.disable();
+
+    var basemap = L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors',
+        }).addTo(map);
+
+	var border = {{territory.border_as_json()|safe}};
+	var locations = {{territory.locations_as_json()|safe}};
+
+	for(var i=0; i < locations.length; i++) {
+		var loc = locations[i];
+		L.marker([loc['lat'], loc['lng']], {
+			icon: L.divIcon({
+				className: 'location-icon',
+				html: loc['icon']
+				})
+			}).addTo(map);
+		}
+
+	var polygon = L.polygon(border, {
+		color: 'blue',
+		fill: false
+		}).addTo(map);
+
+	map.fitBounds(polygon.getBounds());
+
+</script>
+
+</body>
+</html>
