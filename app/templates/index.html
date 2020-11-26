@@ -3,14 +3,43 @@
 <head>
 <meta charset="utf-8">
 <title>Alba Utilities</title>
+<style>
+HTML, BODY, H1, P, DIV, FORM {
+	margin: 0;
+	padding: 0;
+	}
+BODY {
+	font-family: sans-serif;
+	padding: .5em;
+	}
+H1 {
+	margin: 0;
+	}
+P {
+	}
+DIV.row {
+	display: flex;
+	margin: .5em -.2em;
+	}
+DIV.row * {
+	margin: 0 .2em;
+	}
+DIV.row INPUT {
+	flex-grow: 1;
+	}
+</style>
 </head>
 <body>
 <h1>Alba Utilities</h1>
 
 <form action="/print" method="GET">
-<label>URL</label>
-<input name="url">
-<button type="submit">Reformat</button>
+<p>Enter an Alba URL received from the territory servant. You may use the
+print, all-status, or mobile URL.</p>
+<div class="row">
+	<label>URL:</label>
+	<input name="url">
+</div>
+<button type="submit">Print Format</button>
 </form>
 
 </body>

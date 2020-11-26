@@ -33,14 +33,14 @@ DIV.page {
 	}
 DIV.header, DIV.footer {
 	display: flex;
-	justify-content: space-between;
-	margin: 0 -.5em;
+	margin: 0 -1em;
 	}
 DIV.header > SPAN, DIV.footer > SPAN {
-	margin: 0 .5em;
+	margin: 0 1em;
 	}
 DIV.footer {
 	font-weight: bold;
+	justify-content: space-between;
 	}
 DIV.main {
 	flex-grow: 1;
@@ -71,17 +71,35 @@ TABLE {
 	width: 100%;
 	height: 100%;
 	}
+TR.strikeout TD {
+	position: relative;
+	}
+TR.strikeout TD:before {
+	content: " ";
+	position: absolute;
+	left: 0; top: 50%; width: 100%;
+	border-bottom: 1px solid #000;
+	}
+TR.strikeout TD:first-child:before {
+	left: 3pt; width: calc(100% - 3pt);
+	}
+TR.strikeout TD:last-child:before {
+	left: 0; width: calc(100% - 3pt);
+	}
 TH {
 	font-weight: bold;
 	}
 TH, TD {
 	border: thin solid black;
-	padding: .1em .4em;
+	padding: .29em .4em;
 	text-align: left;
 	white-space: nowrap;
 	width: 0;
 	}
-TH:last-child, TH:last-child {
+TD:first-child {
+	text-align: center;
+	}
+TH:last-child, TD:last-child {
 	width: 50%;
 	}
 
@@ -93,6 +111,9 @@ TH:last-child, TH:last-child {
 	<div class="header">
 		<span><b>Участок:</b> {{ territory.number }}</span>
 		<span><b>Количество имён:</b> {{ territory.addresses|length }}</span>
+		{% if territory.city %}
+		<span><b>Город:</b> {{ territory.city }}</span>
+		{% endif %}
 	</div>
 {% endmacro %}
 
@@ -118,13 +139,14 @@ TH:last-child, TH:last-child {
 	<table>
 		<thead>
 			<tr>
-				<th>X</th>
-				<th>Status</th>
+				<th></th>
 				<th>ФИО</th>
 				<th>Улица</th>
 				<th>Дом</th>
 				<th>Квар.</th>
+				{% if not territory.city %}
 				<th>Город</th>
+				{% endif %}
 				<th>Индекс</th>
 				<th>Телефон</th>
 				<th>Завметки</th>
@@ -132,17 +154,22 @@ TH:last-child, TH:last-child {
 		</thead>
 		<tbody>
 			{% for address in page %}
-			<tr>
-				<th>{{address.marker}}</td>
-				<th>{{address.status}}</td>
+			<tr class="{{address.status_class()}}">
+				<td>{% if address.marker %}{{address.marker}}{% else %}&nbsp;{% endif %}</td>
 				<td>{{address.name}}</td>
 				<td>{{address.street}}</td>
 				<td>{{address.house_number}}</td>
 				<td>{{address.apartment}}</td>
+				{% if not territory.city %}
 				<td>{{address.city}}, {{address.state}}</td>
+				{% endif %}
 				<td>{{address.postal_code}}</td>
 				<td>{{address.phone}}</td>
-				<td>{{address.notes}}</td>	
+				<td>
+					{% if address.status == 'Not valid' %}Не говорят на русском{% endif %}
+					{% if address.status == 'Moved' %}Уехали{% endif %}
+					{{address.notes}}
+				</td>	
 			</tr>
 			{% endfor %}
 		</tbody>

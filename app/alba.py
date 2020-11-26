@@ -9,13 +9,14 @@ class Address(dict):
 		super().__init__(**kwargs)
 		if 'address' in self:
 			address = self.address.split(", ")
-			print(address)
 			self.postal_code = address.pop(-1) if re.match(r'^[0-9-]+$', address[-1]) else ""
 			self.apartment = address.pop(0) if len(address) == 4 else ""
 			street, self.city, self.state = address
 			self.house_number, self.street = street.split(" ",1)
 	def __getattr__(self, name):
 		return self[name] if name in self else ""
+	def status_class(self):
+		return "strikeout" if self.status in ("Moved", "Not valid") else ""
 
 class Territory(object):
 	user_agent = "Mozilla/5.0"
@@ -61,6 +62,11 @@ class Territory(object):
 
 		assert lines[2].startswith("var locations = [") and lines[2][-2:] == '];'
 		self.locations = json.loads(lines[2][16:-1])
+
+		self.cities = set()
+		for address in self.addresses:
+			self.cities.add(address.city)
+		self.city = list(self.cities)[0] if len(self.cities) == 1 else None
 
 	def npages(self):
 		npages = int((len(self.addresses) + self.per_page - 1) / self.per_page)
