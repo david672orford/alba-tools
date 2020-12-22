@@ -2,7 +2,8 @@
 <html>
 <head>
 <meta charset="utf-8">
-<title>Alba Utilities</title>
+<title>Инструменты для Албы</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <style>
 HTML, BODY, H1, P, DIV, FORM {
 	margin: 0;
@@ -17,29 +18,48 @@ H1 {
 	}
 P {
 	}
+
+FORM {
+	border: thin solid #808080;
+	padding: .5em;
+	border-radius: .2em;
+	}
 DIV.row {
 	display: flex;
 	margin: .5em -.2em;
+	padding: .3em;
 	}
 DIV.row * {
 	margin: 0 .2em;
+	padding: .3em;
 	}
 DIV.row INPUT {
 	flex-grow: 1;
 	}
+LABEL {
+	font-weight: bold;
+	}
+BUTTON {
+	font-size: inherit;
+	padding: .5em;
+	}
 </style>
 </head>
 <body>
-<h1>Alba Utilities</h1>
+<h1>Иструменты для Албы</h1>
 
-<form action="/print" method="GET">
-<p>Enter an Alba URL received from the territory servant. You may use the
-print, all-status, or mobile URL.</p>
+<form action="./print" method="GET">
+<p>Вводите ссылку на участок полученую от брата ответственего за территорию. Тогда
+нажмите кнобку чтобы получить участок в указанном виде.</p>
 <div class="row">
 	<label>URL:</label>
 	<input name="url">
 </div>
-<button type="submit">Print Format</button>
+<div class="row">
+	<label>Получить:</label>
+	<button type="submit">Версия для печати</button>
+	<button type="submit" formaction="./research">Версия для иследования</button>
+</div>
 </form>
 
 </body>

@@ -13,3 +13,9 @@ def view_print():
 	territory.per_page = 30
 	return render_template("print.html", territory=territory)
 
+@app.route("/research")
+def view_research():
+	url = request.args.get('url')
+	territory = Territory(url)
+	return render_template("research.html", territory=territory)
+
