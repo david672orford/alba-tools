@@ -1,4 +1,4 @@
-from flask import request, render_template
+from flask import request, render_template, redirect
 from . import app
 from .alba import Territory
 
@@ -9,13 +9,19 @@ def view_index():
 @app.route("/print")
 def view_print():
 	url = request.args.get('url')
-	territory = Territory(url)
-	territory.per_page = 30
+	try:
+		territory = Territory(url)
+		territory.per_page = 30
+	except Exception:
+		return redirect(".")
 	return render_template("print.html", territory=territory)
 
 @app.route("/research")
 def view_research():
 	url = request.args.get('url')
-	territory = Territory(url)
+	try:
+		territory = Territory(url, load_all=True)
+	except Exception:
+		return redirect(".")
 	return render_template("research.html", territory=territory)
 
