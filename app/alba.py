@@ -13,7 +13,7 @@ class Address(dict):
 		if 'address' in self:
 			# 42, 123 Main Street, Manchester, CT, 06040
 			address = self.address.split(", ")
-			print("address:", address)
+			#print("address:", address)
 
 			# Take ZIP code off right (if there is one)
 			self['postal_code'] = address.pop(-1) if re.match(r'^[0-9-]+$', address[-1]) else ""
