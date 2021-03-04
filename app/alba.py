@@ -17,14 +17,22 @@ class Address(dict):
 			# Take ZIP code off right (if there is one)
 			self['postal_code'] = address.pop(-1) if re.match(r'^[0-9-]+$', address[-1]) else ""
 
-			if len(address) >= 3:		# city and state present
+			if re.search(r"^[A-Z][A-Z]$", address[-1]):		# 42, 123 Main Street, Manchester, CT
 				self['state'] = address.pop(-1)
 				self['city'] = address.pop(-1)
-			else:
+			elif not re.search(r"^\d", address[-1]):		# 42, 123 Main Street, Westfield
+				self['state'] = first_address['province']
+				self['city'] = address.pop(-1)
+			else:											# 42, 123 Main Street
 				self['state'] = first_address['province']
 				self['city'] = first_address['city']
+
 			self['apartment'] = address.pop(0) if len(address) == 2 else ""
-			self['house_number'], self['street'] = address[0].split(" ",1)
+			if " " in address[0]:
+				self['house_number'], self['street'] = address[0].split(" ",1)
+			else:
+				self['house_number'] = ""
+				self['street'] = address[0]
 
 	def __getattr__(self, name):
 		return self[name] if name in self else ""
@@ -59,7 +67,7 @@ class Territory(object):
 
 		# Extract the territory access code from the URL of the mobile version.
 		parsed_url = urlparse(url)
-		assert parsed_url.path == "/alba/mobile/", parsed_url.path
+		assert parsed_url.path in ("/alba/mobile", "/alba/mobile/"), "Incorrect path: %s" % parsed_url.path
 		self.territory_access_code = parse_qs(parsed_url.query)['territory'][0]
 
 		self.load(url, load_all)
@@ -93,7 +101,8 @@ class Territory(object):
 		point_to_letter = {}
 		id_to_letter = {}
 		for id, ldata in data['locations'].items():
-			status = xlate_status[ldata['st']]
+			status = ldata['st']
+			status = xlate_status.get(status,status)
 			if status in ("New", "Valid"):
 				point = (ldata['la'], ldata['ln'])
 				letter = point_to_letter.get(point)
@@ -111,15 +120,13 @@ class Territory(object):
 		first_address = None
 		tbody_i = 0
 		for tbody in tree.xpath("//tbody[@class='addresses']"):
-			print(tbody)
 			for tr in tbody.xpath("./tr"):
-				print(tr)
 				id = tr.attrib['id'][2:]
 				if first_address is None:
 					first_address = self.load_address(id)
 	
 				td = tr.xpath("./td")
-				assert len(td) == (2 - tbody_i)
+				assert len(td) == (2 - tbody_i), "Incorrect number of cells"
 	
 				status = td[0].xpath("./span")[0].text
 				if not load_all and status not in ("New", "Valid"):

@@ -55,6 +55,15 @@ BUTTON {
 	<label>URL:</label>
 	<input name="url">
 </div>
+
+<ul>
+{% with messages = get_flashed_messages() %}
+{% for message in messages %}
+  <li>{{ message }}</li>
+{% endfor %}
+{% endwith %}
+</ul>
+
 <div class="row">
 	<label>Получить:</label>
 	<button type="submit">Версия для печати</button>
