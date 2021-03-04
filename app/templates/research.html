@@ -27,6 +27,10 @@ TH, TD {
 	border: thin solid black;
 	padding: .29em .4em;
 	text-align: left;
+<<<<<<< HEAD
+=======
+	vertical-align: top;
+>>>>>>> 4bb17c1b28018d764ba70e95060d639afa358a29
 	white-space: nowrap;
 	width: 0;
 	}
@@ -39,7 +43,13 @@ TD:first-child {
 TH:last-child, TD:last-child {
 	width: 50%;
 	}
+<<<<<<< HEAD
 
+=======
+TD:nth-child(6) {
+	text-align: right;
+	}
+>>>>>>> 4bb17c1b28018d764ba70e95060d639afa358a29
 </style>
 </head>
 <body>
@@ -49,6 +59,11 @@ TH:last-child, TD:last-child {
 	<thead>
 		<tr>
 			<th></th>
+<<<<<<< HEAD
+=======
+			<th></th>
+			<th>Язык</th>
+>>>>>>> 4bb17c1b28018d764ba70e95060d639afa358a29
 			<th>ФИО</th>
 			<th>Улица</th>
 			<th>Дом</th>
@@ -66,6 +81,11 @@ TH:last-child, TD:last-child {
 		{% if address.status not in ("Invalid", "Moved") %}
 		<tr class="{{address.status_class()}}">
 			<td>{% if address.marker %}{{address.marker}}{% else %}&nbsp;{% endif %}</td>
+<<<<<<< HEAD
+=======
+			<td>{{address.status}}</td>
+			<td>{{address.language}}</td>
+>>>>>>> 4bb17c1b28018d764ba70e95060d639afa358a29
 			<td>{{ address.name }}
 				{%- for name in address.names_list() -%}
 				<br><a href="https://www.truepeoplesearch.com/results?name={{name|urlencode}}&citystatezip={{address.city_state()|urlencode}}" target="_blank">

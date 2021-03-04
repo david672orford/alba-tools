@@ -49,12 +49,21 @@ BUTTON {
 <h1>Иструменты для Албы</h1>
 
 <form action="./print" method="GET">
-<p>Вводите ссылку на участок полученую от брата ответственего за территорию. Тогда
-нажмите кнобку чтобы получить участок в указанном виде.</p>
+<p>Вводите ссылку на участок (для мобильных устройств) полученую от брата ответственего
+за территорию. Тогда нажмите кнобку чтобы получить участок в указанном виде.</p>
 <div class="row">
 	<label>URL:</label>
 	<input name="url">
 </div>
+
+<ul>
+{% with messages = get_flashed_messages() %}
+{% for message in messages %}
+  <li>{{ message }}</li>
+{% endfor %}
+{% endwith %}
+</ul>
+
 <div class="row">
 	<label>Получить:</label>
 	<button type="submit">Версия для печати</button>

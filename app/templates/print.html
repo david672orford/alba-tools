@@ -102,7 +102,9 @@ TD:first-child {
 TH:last-child, TD:last-child {
 	width: 50%;
 	}
-
+TD:nth-child(4) {
+	text-align: right;
+	}
 </style>
 </head>
 <body>
@@ -161,7 +163,7 @@ TH:last-child, TD:last-child {
 				<td>{{address.house_number}}</td>
 				<td>{{address.apartment}}</td>
 				{% if not territory.city %}
-				<td>{{address.city}}, {{address.state}}</td>
+				<td>{{address.city}}{% if address.state %}, {{address.state}}{% endif %}</td>
 				{% endif %}
 				<td>{{address.postal_code}}</td>
 				<td>{{address.phone}}</td>
@@ -196,14 +198,14 @@ TH:last-child, TD:last-child {
         }).addTo(map);
 
 	var border = {{territory.border_as_json()|safe}};
-	var locations = {{territory.locations_as_json()|safe}};
+	var markers = {{territory.markers_as_json()|safe}};
 
-	for(var i=0; i < locations.length; i++) {
-		var loc = locations[i];
-		L.marker([loc['lat'], loc['lng']], {
+	for(var i=0; i < markers.length; i++) {
+		var marker = markers[i];
+		L.marker(marker['point'], {
 			icon: L.divIcon({
 				className: 'location-icon',
-				html: loc['icon']
+				html: marker['letter']
 				})
 			}).addTo(map);
 		}
