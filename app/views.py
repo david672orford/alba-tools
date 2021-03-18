@@ -16,6 +16,7 @@ def view_print():
 		territory = Territory(url)
 		territory.per_page = 30
 	except Exception as e:
+		#raise
 		flash("Exception: %s" % e)
 		return redirect(".")
 	return render_template("print.html", territory=territory)

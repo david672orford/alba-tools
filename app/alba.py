@@ -97,7 +97,11 @@ class Territory(object):
 			4: 'Moved',
 			6: 'Not Valid',
 			}
-		marker_letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+		alphabet = list("ABCDEFGHIJKLMNOPQRSTUVWXYZ")
+		marker_letters = alphabet[:]
+		for letter1 in alphabet:
+			for letter2 in alphabet:
+				marker_letters.append(letter1 + letter2)
 		self.markers = []
 		point_to_letter = {}
 		id_to_letter = {}
