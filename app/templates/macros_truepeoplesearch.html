@@ -1,0 +1,18 @@
+{% macro search_names(address) %}
+	{%- for name in address.names_list() -%}
+		<br><a href="https://www.truepeoplesearch.com/results?name={{name|urlencode}}&citystatezip={{address.city_state()|urlencode}}" target="_blank">
+			{{name}}</a>
+	{%- endfor %}
+{% endmacro %}
+
+{% macro search_house(address) %}
+	<a href="https://www.truepeoplesearch.com/results?streetaddress={{ address.street_address()|urlencode }}&citystatezip={{ address.city_state()|urlencode }}" target="_blank">
+		{{address.house_number}}
+	</a>
+{% endmacro %}
+
+{% macro search_phone(address) %}
+	<a href="https://www.truepeoplesearch.com/results?phoneno={{ address.phone|urlencode }}" target="_blank">
+		{{address.phone}}
+	</a>
+{% endmacro %}

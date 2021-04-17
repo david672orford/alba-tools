@@ -1,0 +1,18 @@
+{% macro search_names(address) %}
+	{%- for name in address.names_list() -%}
+		<br><a href="https://www.fastpeoplesearch.com/name/{{name|weirdencode}}_{{address.city_state()|weirdencode}}" target="_blank">
+			{{name}}</a>
+	{%- endfor %}
+{% endmacro %}
+
+{% macro search_house(address) %}
+	<a href="https://www.fastpeoplesearch.com/address/{{ address.street_address()|weirdencode }}_{{ address.city_state()|weirdencode }}" target="_blank">
+		{{address.house_number}}
+	</a>
+{% endmacro %}
+
+{% macro search_phone(address) %}
+	<a href="https://www.fastpeoplesearch.com/{{ address.phone|phoneencode }}" target="_blank">
+		{{address.phone}}
+	</a>
+{% endmacro %}

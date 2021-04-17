@@ -48,6 +48,7 @@ TD:nth-child(6) {
 <body>
 <h1>Участок {{territory.number}} {{ territory.city }}</h1>
 
+{% from 'macros_fastpeoplesearch.html' import search_names, search_house, search_phone %}
 <table>
 	<thead>
 		<tr>
@@ -73,25 +74,15 @@ TD:nth-child(6) {
 			<td>{% if address.marker %}{{address.marker}}{% else %}&nbsp;{% endif %}</td>
 			<td>{{address.status}}</td>
 			<td>{{address.language}}</td>
-			<td>{{ address.name }}
-				{%- for name in address.names_list() -%}
-				<br><a href="https://www.truepeoplesearch.com/results?name={{name|urlencode}}&citystatezip={{address.city_state()|urlencode}}" target="_blank">
-					{{name}}</a>
-				{%- endfor %}
-			</td>
+			<td>{{address.name}}{{ search_names(address) }}</td>
 			<td>{{address.street}}</td>
-			<td><a href="https://www.truepeoplesearch.com/results?streetaddress={{ address.street_address()|urlencode }}&citystatezip={{ address.city_state()|urlencode }}" target="_blank">
-				{{address.house_number}}</a>
-			</td>
+			<td>{{search_house(address)}}</td>
 			<td>{{address.apartment}}</td>
 			{% if not territory.city %}
 			<td>{{address.city}}, {{address.state}}</td>
 			{% endif %}
 			<td>{{address.postal_code}}</td>
-			<td>
-				<a href="https://www.truepeoplesearch.com/results?phoneno={{ address.phone|urlencode }}" target="_blank">
-				{{address.phone}}</a>
-			</td>
+			<td>{{search_phone(address)}}</a>
 			<td>
 				{% if address.status == 'Not valid' %}Не говорят на русском{% endif %}
 				{{address.notes}}
