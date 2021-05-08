@@ -82,7 +82,7 @@ def view_json():
 		'description': territory.description,
 		'notes': territory.notes,
 		'addresses': territory.addresses,
-		'border': territory.border_as_json()
+		'border': territory.border
 		}
 
 # This is unfinished
