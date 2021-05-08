@@ -6,6 +6,9 @@ from lxml.html import fromstring
 import json
 import re
 
+class AlbaError(Exception):
+	pass
+
 class Address(dict):
 	def __init__(self, first_address, **kwargs):
 		super().__init__(**kwargs)
@@ -90,6 +93,8 @@ class Territory(object):
 			territory = self.territory_access_code,
 			nv = ''
 			))
+		if data['error']:
+			raise AlbaError(data['error'])
 		data = data['data']
 
 		metadata = data['meta']['territory']

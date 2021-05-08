@@ -56,7 +56,7 @@ def view_print():
 		territory.per_page = 30
 	except Exception as e:
 		#raise
-		flash("Exception: %s" % e)
+		flash("Сбой: %s" % e)
 		return redirect(".")
 	return render_template("print.html", territory=territory)
 
@@ -75,6 +75,7 @@ def view_research():
 # Get the territory from Alba, return the border polygon in JSON format
 @app.route("/border")
 def view_border():
+	url = request.args.get('url')
 	territory = Territory(url)
 	return territory.border_as_json()
 
