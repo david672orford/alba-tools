@@ -34,16 +34,57 @@ TH, TD {
 TH {
 	font-weight: bold;
 	}
-TD:first-child {
+TD:first-child {					/* marker */
 	text-align: center;
 	}
-TH:last-child, TD:last-child {
+TH:last-child, TD:last-child {		/* remarks column */
 	width: 50%;
 	}
-TD:nth-child(6) {
+TD:nth-child(6) {					/* house number */
 	text-align: right;
 	}
+
+A, .addressid {
+	text-decoration: none;
+	color: rgb(0, 0, 238);
+	}
+
+.addressid {
+	font-size: 80%;
+	cursor: pointer;
+	}
+#edit_pane {
+	border: thin solid black;
+	padding: .5em;
+	margin-top: .5em;
+	}
 </style>
+<script>
+let territory = "{{territory.territory_access_code}}";
+
+function open_address(event) {
+	let id = event.target.textContent;
+	fetch("/edit?territory=" + encodeURIComponent(territory) + "&id=" + encodeURIComponent(id))
+		.then(function(response) {
+			return response.text();
+		})
+		.then(function(response) {
+			document.getElementById("edit_pane").innerHTML = response;
+		})
+		.catch(function(err) {
+			console.log("Error: " + err);
+		});
+}
+
+/* Attach a click handler to each address ID */
+document.addEventListener('DOMContentLoaded', function() {
+	let addressids = document.getElementsByClassName("addressid");
+	for(let i=0; i < addressids.length; i++) {
+		let addressid = addressids[i];
+		addressid.addEventListener('click', open_address);
+	}
+});
+</script>
 </head>
 <body>
 <h1>Участок {{territory.number}} {{ territory.city }}</h1>
@@ -52,8 +93,8 @@ TD:nth-child(6) {
 <table>
 	<thead>
 		<tr>
-			<th></th>
-			<th></th>
+			<th>ID</th>
+			<th>Статус</th>
 			<th>Язык</th>
 			<th>ФИО</th>
 			<th>Улица</th>
@@ -71,7 +112,7 @@ TD:nth-child(6) {
 		{% for address in territory.addresses %}
 		{% if address.status not in ("Invalid", "Moved") %}
 		<tr class="{{address.status_class()}}">
-			<td>{% if address.marker %}{{address.marker}}{% else %}&nbsp;{% endif %}</td>
+			<td class="addressid">{{address.id}}</td>
 			<td>{{address.status}}</td>
 			<td>{{address.language}}</td>
 			<td>{{address.name}}{{ search_names(address) }}</td>
@@ -92,6 +133,10 @@ TD:nth-child(6) {
 		{% endfor %}
 	</tbody>
 </table>
+
+<div id="edit_pane">
+
+</div>
 
 </body>
 </html>

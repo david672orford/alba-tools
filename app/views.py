@@ -9,28 +9,7 @@ from .alba import Territory
 def view_index():
 	return render_template("index.html")
 
-@app.route("/print")
-def view_print():
-	url = request.args.get('url')
-	try:
-		territory = Territory(url)
-		territory.per_page = 30
-	except Exception as e:
-		#raise
-		flash("Exception: %s" % e)
-		return redirect(".")
-	return render_template("print.html", territory=territory)
-
-@app.route("/research")
-def view_research():
-	url = request.args.get('url')
-	try:
-		territory = Territory(url, load_all=True)
-	except Exception as e:
-		flash("Exception: %s" % e)
-		return redirect(".")
-	return render_template("research.html", territory=territory)
-
+# Get the territory from Alba, return the list of addresses in CSV format
 @app.route("/download")
 def view_download():
 	url = request.args.get('url')
@@ -67,4 +46,47 @@ def view_download():
 	response.headers['Content-Disposition'] = 'attachment; filename="alba-territory-%s.csv"' % territory.number
 	return response
 
+# Get the territory from Alba, return a web pages with a LeafletJS map
+# and a table of addresses
+@app.route("/print")
+def view_print():
+	url = request.args.get('url')
+	try:
+		territory = Territory(url)
+		territory.per_page = 30
+	except Exception as e:
+		#raise
+		flash("Exception: %s" % e)
+		return redirect(".")
+	return render_template("print.html", territory=territory)
+
+# Get the territory from Alba, return a table of addresses with links
+# to an online directory.
+@app.route("/research")
+def view_research():
+	url = request.args.get('url')
+	try:
+		territory = Territory(url, load_all=True)
+	except Exception as e:
+		flash("Exception: %s" % e)
+		return redirect(".")
+	return render_template("research.html", territory=territory)
+
+# Get the territory from Alba, return the border polygon in JSON format
+@app.route("/border")
+def view_border():
+	territory = Territory(url)
+	return territory.border_as_json()
+
+# This is unfinished
+@app.route("/edit")
+def view_edit():
+	data = Territory.get(Territory.ajax_url, dict(
+		territory = request.args.get('territory'),
+		cmd = "edit",
+		id = request.args.get('id')
+		))
+	response = make_response(data['data']['address'])
+	response.headers['Content-Type'] = 'text/html'
+	return response
 

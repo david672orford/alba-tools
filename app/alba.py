@@ -73,17 +73,24 @@ class Territory(object):
 
 		self.load(url, load_all)
 
+	# Send AJAX request to Alba. Parse the JSON response.
+	@staticmethod
+	def get(url, query):
+		response = urlopen(Request(
+			Territory.ajax_url + "?" + urlencode(query),
+			headers={'User-Agent': Territory.user_agent}
+			))
+		data = json.loads(response.read())
+		#print(data)
+		return data
+
 	def load(self, url, load_all):
 
-		# Send AJAX request. Parse the JSON response.
-		response = urlopen(Request(
-			self.ajax_url + "?" + urlencode({
-				'territory': self.territory_access_code,
-				'nv': '',
-				}),
-			headers={'User-Agent': self.user_agent}
+		data = self.get(url, dict(
+			territory = self.territory_access_code,
+			nv = ''
 			))
-		data = json.loads(response.read())['data']
+		data = data['data']
 
 		metadata = data['meta']['territory']
 		self.number = metadata['number']
