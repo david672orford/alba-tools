@@ -73,11 +73,17 @@ def view_research():
 	return render_template("research.html", territory=territory)
 
 # Get the territory from Alba, return the border polygon in JSON format
-@app.route("/border")
-def view_border():
+@app.route("/json")
+def view_json():
 	url = request.args.get('url')
 	territory = Territory(url)
-	return territory.border_as_json()
+	return {
+		'number': territory.number,
+		'description': territory.description,
+		'notes': territory.notes,
+		'addresses': territory.addresses,
+		'border': territory.border_as_json()
+		}
 
 # This is unfinished
 @app.route("/edit")
