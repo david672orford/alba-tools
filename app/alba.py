@@ -43,7 +43,7 @@ class Address(dict):
 
 	# Class for table row
 	def status_class(self):
-		return "strikeout" if self.status in ("Moved", "Not valid") else ""
+		return "strikeout" if self.status not in ("Valid", "New", "") else ""
 
 	# Parse the name field and return a list of individual names
 	def names_list(self):
@@ -102,20 +102,24 @@ class Territory(object):
 		self.description = metadata['description']
 		self.notes = metadata['territory_notes']
 
+		# For converting the numberic status values in the locations structure to the strings used in the HTML table
 		xlate_status = {
-			0: 'Also',
 			1: 'New',
 			2: 'Valid',
-			3: 'Do Not Call',
+			3: 'Do not call',
 			4: 'Moved',
 			5: 'Duplicate',
 			6: 'Not valid',
 			}
+
+		# Create a list of markers starting with the alphabet, then AA, AB, AC, etc.
 		alphabet = list("ABCDEFGHIJKLMNOPQRSTUVWXYZ")
 		marker_letters = alphabet[:]
 		for letter1 in alphabet:
 			for letter2 in alphabet:
 				marker_letters.append(letter1 + letter2)
+
+		# Assign a marker to each location which needs to be visited
 		self.markers = []
 		point_to_letter = {}
 		id_to_letter = {}
@@ -168,7 +172,6 @@ class Territory(object):
 				else:		# "Also in this area"
 					who = td[0].xpath("./strong")[0]
 					where = td[0].xpath(".//span")[2]
-
 	
 				row = Address(
 					first_address = first_address,

@@ -52,7 +52,7 @@ def view_download():
 def view_print():
 	url = request.args.get('url')
 	try:
-		territory = Territory(url)
+		territory = Territory(url, load_all=True)
 		territory.per_page = 30
 	except Exception as e:
 		#raise

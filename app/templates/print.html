@@ -168,7 +168,8 @@ TD:nth-child(4) {
 				<td>{{address.postal_code}}</td>
 				<td>{{address.phone}}</td>
 				<td>
-					{% if address.status == 'Not valid' %}
+					{% if address.status == 'Valid' %}
+					{% elif address.status == 'Not valid' %}
 						Не говорят на русском
 					{% elif address.status == 'Moved' %}
 						Уехали
