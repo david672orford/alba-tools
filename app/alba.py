@@ -106,8 +106,10 @@ class Territory(object):
 			0: 'Also',
 			1: 'New',
 			2: 'Valid',
+			3: 'Do Not Call',
 			4: 'Moved',
-			6: 'Not Valid',
+			5: 'Duplicate',
+			6: 'Not valid',
 			}
 		alphabet = list("ABCDEFGHIJKLMNOPQRSTUVWXYZ")
 		marker_letters = alphabet[:]
@@ -218,10 +220,4 @@ class Territory(object):
 		while len(addresses) < self.per_page:
 			addresses.append(Address(None))
 		yield addresses
-
-	def markers_as_json(self):
-		return json.dumps(self.markers)
-
-	def border_as_json(self):
-		return json.dumps(self.border)
 

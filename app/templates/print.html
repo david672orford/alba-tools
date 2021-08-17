@@ -168,8 +168,15 @@ TD:nth-child(4) {
 				<td>{{address.postal_code}}</td>
 				<td>{{address.phone}}</td>
 				<td>
-					{% if address.status == 'Not valid' %}Не говорят на русском{% endif %}
-					{% if address.status == 'Moved' %}Уехали{% endif %}
+					{% if address.status == 'Not valid' %}
+						Не говорят на русском
+					{% elif address.status == 'Moved' %}
+						Уехали
+					{% elif address.status == 'Do not call' %}
+						Категорический отказ
+					{% else %}
+						{{address.status}}
+					{% endif %}
 					{{address.notes}}
 				</td>	
 			</tr>
@@ -197,8 +204,8 @@ TD:nth-child(4) {
         attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors',
         }).addTo(map);
 
-	var border = {{territory.border_as_json()|safe}};
-	var markers = {{territory.markers_as_json()|safe}};
+	var border = {{territory.border|tojson}};
+	var markers = {{territory.markers|tojson}};
 
 	for(var i=0; i < markers.length; i++) {
 		var marker = markers[i];
