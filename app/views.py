@@ -19,26 +19,37 @@ def view_download():
 		flash("Exception: %s" % e)
 		return redirect(".")
 	out_buffer = StringIO()
-	header = ["Salutation", "FirstName", "Name", "Address", "City", "State", "ZIP"]
+	header = ["Status", "Last", "First", "Phone", "Address", "City", "State", "ZIP"]
 	out = csv.DictWriter(out_buffer, fieldnames=header, quoting=csv.QUOTE_ALL)
 	out.writeheader()
 	for address in territory.addresses:
+		# Correct format: Last, First, First
 		m = re.match(r"^([^,]+), (.+)$", address.name)
 		if m:
-			formatted_name = "%s %s" % (m.group(2), m.group(1))
+			last_name, first_name = m.groups()#(m.group(1), m.group(2))
 		else:
-			formatted_name = address.name
+			# Incorrect format: First Last
+			m = re.match(r"^([^,\s]+)\s+([^,\s]+)$", address.name)
+			if m:
+				first_name, last_name = m.groups()
+			# Unknown format
+			else:
+				last_name = address.name
+				first_name = ""
+
 		formatted_address = "%s %s" % (address.house_number, address.street)
 		if address.apartment:
 			formatted_address = "%s Apt. %s" % (formatted_address, address.apartment)
+
 		out.writerow(dict(
-			Salutation = "",
-			FirstName = "",
-			Name = formatted_name,
+			Status = address.status,
+			Last = last_name,
+			First = first_name,
+			Phone = address.phone,
 			Address = formatted_address,
 			City = address.city,
 			State = address.state,
-			ZIP = address.postal_code
+			ZIP = address.postal_code,
 			))
 
 	response = make_response(out_buffer.getvalue().encode('utf-8'))
