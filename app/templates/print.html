@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8">
 <title>Участок {{territory.number}}</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <link rel="stylesheet" href="//unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
 <style>
 * {
@@ -10,7 +11,7 @@
 	}
 
 @page {
-	size: 11.0in 8.5in;
+	size: 8.5in 11.0in landscape;
 	margin: 0;
 	}
 
@@ -30,6 +31,7 @@ DIV.page {
 	page-break-after: always;
 	height: 8.0in;
 	margin: .25in;
+	border: thin dotted green;
 	}
 DIV.header, DIV.footer {
 	display: flex;
@@ -91,7 +93,7 @@ TH {
 	}
 TH, TD {
 	border: thin solid black;
-	padding: .29em .4em;
+	//padding: .29em .4em;
 	text-align: left;
 	white-space: nowrap;
 	width: 0;
@@ -142,6 +144,7 @@ TD:nth-child(4) {
 		<thead>
 			<tr>
 				<th></th>
+				<th>Статус</th>
 				<th>ФИО</th>
 				<th>Улица</th>
 				<th>Дом</th>
@@ -158,6 +161,7 @@ TD:nth-child(4) {
 			{% for address in page %}
 			<tr class="{{address.status_class()}}">
 				<td>{% if address.marker %}{{address.marker}}{% else %}&nbsp;{% endif %}</td>
+				<td>{{address.status}}</td>
 				<td>{{address.name}}</td>
 				<td>{{address.street}}</td>
 				<td>{{address.house_number}}</td>

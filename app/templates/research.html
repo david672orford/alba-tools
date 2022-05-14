@@ -3,11 +3,11 @@
 <head>
 <meta charset="utf-8">
 <title>Участок {{territory.number}}</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='sortable.css', v=1) }}">
 <style>
 * {
 	box-sizing: border-box;
 	}
-
 HTML, BODY, H1 {
 	margin: 0;
 	padding: 0;
@@ -44,61 +44,75 @@ TD:nth-child(6) {					/* house number */
 	text-align: right;
 	}
 
+/* Hyperlinks */
 A, .addressid {
 	text-decoration: none;
 	color: rgb(0, 0, 238);
-	}
-
-.addressid {
 	font-size: 80%;
 	cursor: pointer;
 	}
+
+/* Edit an address record */
 #edit_pane {
+	display: none;
+
+	position: fixed; top: 50%; left: 0; right: 0;
+	margin: 0 auto;
+	width: 600px;
+	height: 425px;
+	transform: translateY(-50%);
+
+	background-color: white;
 	border: thin solid black;
+	padding: .2em;
+	}
+#edit_pane FORM {
+	display: block;
+	}
+#edit_pane .input-large {
+	width: 25em;
+	}
+#edit_pane .input-medium {
+	width: 15em;
+	}
+#edit_pane .input-small {
+	width: 6em;
+	}
+#edit_pane .input-mini {
+	width: 4em;
+	}
+#edit_pane .input-mini.uneditable-input {		/* lat, lng */
+	width: 8em;
+	}
+#edit_pane INPUT, #edit_pane SELECT, #edit_pane BUTTON, #edit_pane TEXTAREA {
+	margin: .3em;
+	}
+#edit_pane SELECT, #edit_pane INPUT {
+	padding: .3em;
+	}
+#edit_pane TEXTAREA {
+	width: calc(100% - 0.6em);
+	height: 8em;
+	}
+#edit_pane BUTTON {
 	padding: .5em;
-	margin-top: .5em;
 	}
 </style>
-<script>
-let territory = "{{territory.territory_access_code}}";
-
-function open_address(event) {
-	let id = event.target.textContent;
-	fetch("/edit?territory=" + encodeURIComponent(territory) + "&id=" + encodeURIComponent(id))
-		.then(function(response) {
-			return response.text();
-		})
-		.then(function(response) {
-			document.getElementById("edit_pane").innerHTML = response;
-		})
-		.catch(function(err) {
-			console.log("Error: " + err);
-		});
-}
-
-/* Attach a click handler to each address ID */
-document.addEventListener('DOMContentLoaded', function() {
-	let addressids = document.getElementsByClassName("addressid");
-	for(let i=0; i < addressids.length; i++) {
-		let addressid = addressids[i];
-		addressid.addEventListener('click', open_address);
-	}
-});
-</script>
 </head>
 <body>
 <h1>Участок {{territory.number}} {{ territory.city }}</h1>
 
 {% from 'macros_fastpeoplesearch.html' import search_names, search_house, search_phone %}
-<table>
+<table class="sortable">
 	<thead>
 		<tr>
+			<th></th>
 			<th>ID</th>
 			<th>Статус</th>
 			<th>Язык</th>
 			<th>ФИО</th>
-			<th>Улица</th>
 			<th>Дом</th>
+			<th>Улица</th>
 			<th>Квар.</th>
 			{% if not territory.city %}
 			<th>Город</th>
@@ -112,12 +126,13 @@ document.addEventListener('DOMContentLoaded', function() {
 		{% for address in territory.addresses %}
 		{% if address.status not in ("Invalid", "Moved") %}
 		<tr class="{{address.status_class()}}">
+			<td>{% if address.marker %}{{address.marker}}{% else %}&nbsp;{% endif %}</td>
 			<td class="addressid">{{address.id}}</td>
 			<td>{{address.status}}</td>
 			<td>{{address.language}}</td>
 			<td>{{address.name}}{{ search_names(address) }}</td>
-			<td>{{address.street}}</td>
 			<td>{{search_house(address)}}</td>
+			<td>{{address.street}}</td>
 			<td>{{address.apartment}}</td>
 			{% if not territory.city %}
 			<td>{{address.city}}, {{address.state}}</td>
@@ -138,5 +153,77 @@ document.addEventListener('DOMContentLoaded', function() {
 
 </div>
 
+<script>
+let territory = "{{territory.territory_access_code}}";
+let edit_pane = document.getElementById("edit_pane");
+
+function on_geocode(event) {
+	console.log("Re-geocode");
+
+	}
+
+function on_save(event) {
+	console.log("Save");
+	let form = edit_pane.getElementsByTagName("form")[0];
+	fetch("/edit?territory=" + encodeURIComponent(territory)
+		+ "&id=" + event.target.getAttribute('rel')
+		+ "&cmd=save"
+		+ "&" + new URLSearchParams(new FormData(form)).toString()
+		).then(function(response) {
+			return response.text();
+		})
+		.then(function(response) {
+			if(response === "OK") {
+				edit_pane.style.display = null;
+			} else {
+				alert("Save failed on server.");
+			}
+		})
+		.catch(function(err) {
+			console.log("Error: " + err);
+			console.log("Save failed. See Javascript console log.");
+		});
+	}
+
+function on_cancel(event) {
+	console.log("Cancel");
+	edit_pane.style.display = null;
+	}
+
+function open_address(event) {
+	let id = event.target.textContent;
+	fetch("/edit?territory=" + encodeURIComponent(territory) + "&id=" + encodeURIComponent(id) + "&cmd=edit")
+		.then(function(response) {
+			return response.text();
+		})
+		.then(function(response) {
+			edit_pane.innerHTML = response;
+			edit_pane.style.display = "block";
+			let buttons = edit_pane.getElementsByTagName("button");
+			buttons[0].addEventListener('click', on_geocode);
+			buttons[1].addEventListener('click', on_save);
+			buttons[2].addEventListener('click', on_cancel);
+			let inputs = edit_pane.getElementsByTagName("input");
+			inputs['lat'].disabled = false;
+			inputs['lng'].disabled = false;
+		})
+		.catch(function(err) {
+			console.log("Error: " + err);
+			console.log("Load failed. See Javascript console log.");
+		});
+}
+
+/* Attach a click handler to each address ID which will load
+   it into the edit pane. */
+document.addEventListener('DOMContentLoaded', function() {
+	let addressids = document.getElementsByClassName("addressid");
+	for(let i=0; i < addressids.length; i++) {
+		let addressid = addressids[i];
+		addressid.addEventListener('click', open_address);
+	}
+});
+</script>
+
+<script src="{{ url_for('static', filename='sortable.js', v=1) }}"></script>
 </body>
 </html>

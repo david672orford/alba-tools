@@ -2,6 +2,7 @@ from flask import request, render_template, redirect, flash, make_response
 import csv
 from io import StringIO
 import re
+import json
 from . import app
 from .alba import Territory
 
@@ -96,15 +97,15 @@ def view_json():
 		'border': territory.border
 		}
 
-# This is unfinished
 @app.route("/edit")
 def view_edit():
-	data = Territory.get(Territory.ajax_url, dict(
-		territory = request.args.get('territory'),
-		cmd = "edit",
-		id = request.args.get('id')
-		))
-	response = make_response(data['data']['address'])
-	response.headers['Content-Type'] = 'text/html'
-	return response
+	assert request.args.get('territory')
+	assert request.args.get('cmd') in ('new','add','edit','save')
+	data = Territory.get(Territory.ajax_url, request.args)
+	if request.args.get('cmd') in ('new','edit'):
+		response = make_response(data['data']['address'])
+		response.headers['Content-Type'] = 'text/html'
+		return response
+	print(json.dumps(data, indent=2))
+	return "OK"
 
