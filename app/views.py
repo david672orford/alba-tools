@@ -55,7 +55,7 @@ def view_download():
 
 	response = make_response(out_buffer.getvalue().encode('utf-8'))
 	response.headers['Content-Type'] = 'text/csv'
-	response.headers['Content-Disposition'] = 'attachment; filename="alba-territory-%s.csv"' % territory.number
+	response.headers['Content-Disposition'] = 'attachment; filename="territory-%s.csv"' % territory.number
 	return response
 
 # Get the territory from Alba, return a web pages with a LeafletJS map
