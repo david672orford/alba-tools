@@ -12,7 +12,7 @@
 
 @page {
 	size: 8.5in 11.0in landscape;
-	margin: 0;
+	margin: 0.25in;
 	}
 
 HTML, BODY {
@@ -25,13 +25,21 @@ BODY {
 
 /* Pages */
 DIV.page {
+	/* Flexbox so that we can have a header, body, and footer */
 	display: flex;
 	flex-direction: column;
 	justify-content: space-between;
-	page-break-after: always;
+
+	/* 11" x 8.5" */
+	//margin: .25in;
+	width: 10.5in;
 	height: 8.0in;
-	margin: .25in;
-	border: thin dotted green;
+
+	border: thin dotted green;	/* for debugging */
+	page-break-after: always;
+	}
+DIV.page, DIV.page > * {
+	overflow: hidden;
 	}
 DIV.header, DIV.footer {
 	display: flex;
@@ -46,6 +54,7 @@ DIV.footer {
 	}
 DIV.main {
 	flex-grow: 1;
+	overflow: hidden;
 	}
 
 /* Territory map */
@@ -72,7 +81,62 @@ TABLE {
 	border-collapse: collapse;
 	width: 100%;
 	height: 100%;
+	table-layout: fixed;
 	}
+TH {
+	font-weight: bold;
+	}
+TH, TD {
+	border: thin solid black;
+	padding: .1em .3em;
+	text-align: left;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	}
+
+TH:nth-child(1) {				/* Symbol */
+	width: .25in; 
+	}
+TD:nth-child(1) {
+	text-align: center;
+	}
+
+TH:nth-child(2) {				/* Status */
+	width: .50in;	
+	}
+
+TH:nth-child(3) {				/* Name */
+	width: 2.0in;
+	}
+
+TH:nth-child(4) {					/* Street name */
+	width: 1.2in;
+	}
+
+TH:nth-child(5), TH:nth-child(6) {	/* House number and apartment number */
+	width: .30in;
+	}
+TD:nth-child(5), TD:nth-child(6) {
+	text-align: right;
+	}
+
+TH:nth-child(7) {					/* City */
+	width: 1.0in;
+	}
+
+TH:nth-child(8) {					/* ZIP Code */
+	width: .70in;
+	}
+
+TH:nth-child(9) {					/* Telephone */
+	width: 1in;
+	}
+
+TH:nth-child(10) {					/* Notes */
+	width: 1.5in;
+	}
+
 TR.strikeout TD {
 	position: relative;
 	}
@@ -80,7 +144,7 @@ TR.strikeout TD:before {
 	content: " ";
 	position: absolute;
 	left: 0; top: 50%; width: 100%;
-	border-bottom: 1px solid #000;
+	border-bottom: 1px dotted #000;
 	}
 TR.strikeout TD:first-child:before {
 	left: 3pt; width: calc(100% - 3pt);
@@ -88,25 +152,7 @@ TR.strikeout TD:first-child:before {
 TR.strikeout TD:last-child:before {
 	left: 0; width: calc(100% - 3pt);
 	}
-TH {
-	font-weight: bold;
-	}
-TH, TD {
-	border: thin solid black;
-	//padding: .29em .4em;
-	text-align: left;
-	white-space: nowrap;
-	width: 0;
-	}
-TD:first-child {
-	text-align: center;
-	}
-TH:last-child, TD:last-child {
-	width: 50%;
-	}
-TD:nth-child(4) {
-	text-align: right;
-	}
+
 </style>
 </head>
 <body>

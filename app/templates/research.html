@@ -59,12 +59,19 @@ A, .addressid {
 	position: fixed; top: 50%; left: 0; right: 0;
 	margin: 0 auto;
 	width: 600px;
-	height: 425px;
 	transform: translateY(-50%);
 
 	background-color: white;
 	border: thin solid black;
-	padding: .2em;
+	}
+#edit_pane DIV#edit_pane_title {
+	background-color: blue;
+	color: white;
+	font-family: sans-serif;
+	padding: .2em .5em;
+	}
+#edit_pane DIV#edit_pane_body {
+	margin: .2em;
 	}
 #edit_pane FORM {
 	display: block;
@@ -150,12 +157,15 @@ A, .addressid {
 </table>
 
 <div id="edit_pane">
-
+	<div id="edit_pane_title">Edit</div>
+	<div id="edit_pane_body">
+	</div>
 </div>
 
 <script>
 let territory = "{{territory.territory_access_code}}";
 let edit_pane = document.getElementById("edit_pane");
+let edit_pane_body = document.getElementById("edit_pane_body");
 
 function on_geocode(event) {
 	console.log("Re-geocode");
@@ -197,7 +207,7 @@ function open_address(event) {
 			return response.text();
 		})
 		.then(function(response) {
-			edit_pane.innerHTML = response;
+			edit_pane_body.innerHTML = response;
 			edit_pane.style.display = "block";
 			let buttons = edit_pane.getElementsByTagName("button");
 			buttons[0].addEventListener('click', on_geocode);
