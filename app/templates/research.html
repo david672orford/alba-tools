@@ -175,7 +175,7 @@ function on_geocode(event) {
 function on_save(event) {
 	console.log("Save");
 	let form = edit_pane.getElementsByTagName("form")[0];
-	fetch("/edit?territory=" + encodeURIComponent(territory)
+	fetch("edit?territory=" + encodeURIComponent(territory)
 		+ "&id=" + event.target.getAttribute('rel')
 		+ "&cmd=save"
 		+ "&" + new URLSearchParams(new FormData(form)).toString()
@@ -202,7 +202,7 @@ function on_cancel(event) {
 
 function open_address(event) {
 	let id = event.target.textContent;
-	fetch("/edit?territory=" + encodeURIComponent(territory) + "&id=" + encodeURIComponent(id) + "&cmd=edit")
+	fetch("edit?territory=" + encodeURIComponent(territory) + "&id=" + encodeURIComponent(id) + "&cmd=edit")
 		.then(function(response) {
 			return response.text();
 		})
