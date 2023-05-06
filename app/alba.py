@@ -84,7 +84,7 @@ class Territory(object):
 			headers={'User-Agent': Territory.user_agent}
 			))
 		data = json.loads(response.read())
-		#print(data)
+		#print(json.dumps(data, indent=2))
 		return data
 
 	def load(self, url, load_all):

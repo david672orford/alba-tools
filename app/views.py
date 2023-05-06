@@ -20,7 +20,7 @@ def view_download():
 		flash("Exception: %s" % e)
 		return redirect(".")
 	out_buffer = StringIO()
-	header = ["Status", "Last", "First", "Phone", "Address", "City", "State", "ZIP"]
+	header = ["Status", "Last", "First", "Phone", "Address", "City", "State", "ZIP", "Notes"]
 	out = csv.DictWriter(out_buffer, fieldnames=header, quoting=csv.QUOTE_ALL)
 	out.writeheader()
 	for address in territory.addresses:
@@ -51,6 +51,7 @@ def view_download():
 			City = address.city,
 			State = address.state,
 			ZIP = address.postal_code,
+			Notes = address.notes,
 			))
 
 	response = make_response(out_buffer.getvalue().encode('utf-8'))
