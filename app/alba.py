@@ -27,7 +27,7 @@ class Address(dict):
 			elif not re.search(r"^\d", address[-1]):		# 42, 123 Main Street, Westfield
 				self['state'] = first_address['province']
 				self['city'] = address.pop(-1)
-			else:											# 42, 123 Main Street
+			else:											# 42, 123 Main Street (no city)
 				self['state'] = first_address['province']
 				self['city'] = first_address['city']
 
@@ -152,7 +152,7 @@ class Territory(object):
 				assert len(td) == (2 - tbody_i), "Incorrect number of cells"
 	
 				status = td[0].xpath("./span")[0].text
-				if not load_all and status not in ("New", "Valid"):
+				if not load_all and status not in ("New", "Valid", "Do not call"):
 					continue
 
 				notes = ""
