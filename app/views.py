@@ -24,19 +24,7 @@ def view_download():
 	out = csv.DictWriter(out_buffer, fieldnames=header, quoting=csv.QUOTE_ALL)
 	out.writeheader()
 	for address in territory.addresses:
-		# Correct format: Last, First, First
-		m = re.match(r"^([^,]+), (.+)$", address.name)
-		if m:
-			last_name, first_name = m.groups()#(m.group(1), m.group(2))
-		else:
-			# Incorrect format: First Last
-			m = re.match(r"^([^,\s]+)\s+([^,\s]+)$", address.name)
-			if m:
-				first_name, last_name = m.groups()
-			# Unknown format
-			else:
-				last_name = address.name
-				first_name = ""
+		last_name, first_name = parse_name(address.name)
 
 		formatted_address = "%s %s" % (address.house_number, address.street)
 		if address.apartment:
@@ -58,6 +46,21 @@ def view_download():
 	response.headers['Content-Type'] = 'text/csv'
 	response.headers['Content-Disposition'] = 'attachment; filename="territory-%s.csv"' % territory.number
 	return response
+
+def parse_name(name):
+	if name is None:
+		return ("", "")
+
+	# Correct format: Last, First, First
+	if (m := re.match(r"^([^,]+), (.+)$", name)) is not None:
+		return m.groups()
+
+	# Incorrect format: First Last
+	if (m := re.match(r"^([^,\s]+)\s+([^,\s]+)$", name)) is not None:
+		return (m.group(2), m.group(1))
+
+	# Unknown format
+	return (name, "")
 
 # Get the territory from Alba, return a web pages with a LeafletJS map
 # and a table of addresses
