@@ -13,7 +13,7 @@ def view_index():
 # Get the territory from Alba, return the list of addresses in CSV format
 @app.route("/download")
 def view_download():
-	url = request.args.get('url')
+	url = request.args.get("url")
 	try:
 		territory = Territory(url)
 	except Exception as e:
@@ -42,9 +42,9 @@ def view_download():
 			Notes = address.notes,
 			))
 
-	response = make_response(out_buffer.getvalue().encode('utf-8'))
-	response.headers['Content-Type'] = 'text/csv'
-	response.headers['Content-Disposition'] = 'attachment; filename="territory-%s.csv"' % territory.number
+	response = make_response(out_buffer.getvalue().encode("utf-8"))
+	response.headers["Content-Type"] = "text/csv"
+	response.headers["Content-Disposition"] = 'attachment; filename="territory-%s.csv"' % territory.number
 	return response
 
 def parse_name(name):
@@ -66,7 +66,7 @@ def parse_name(name):
 # and a table of addresses
 @app.route("/print")
 def view_print():
-	url = request.args.get('url')
+	url = request.args.get("url")
 	try:
 		territory = Territory(url, load_all=True)
 		territory.per_page = 30
@@ -94,21 +94,21 @@ def view_json():
 	url = request.args.get('url')
 	territory = Territory(url)
 	return {
-		'number': territory.number,
-		'description': territory.description,
-		'notes': territory.notes,
-		'addresses': territory.addresses,
-		'border': territory.border
+		"number": territory.number,
+		"description": territory.description,
+		"notes": territory.notes,
+		"addresses": territory.addresses,
+		"border": territory.border
 		}
 
 @app.route("/edit")
 def view_edit():
-	assert request.args.get('territory')
-	assert request.args.get('cmd') in ('new','add','edit','save')
+	assert request.args.get("territory")
+	assert request.args.get("cmd") in ("new","add","edit","save")
 	data = Territory.get(Territory.ajax_url, request.args)
-	if request.args.get('cmd') in ('new','edit'):
-		response = make_response(data['data']['address'])
-		response.headers['Content-Type'] = 'text/html'
+	if request.args.get("cmd") in ("new","edit"):
+		response = make_response(data["data"]["address"])
+		response.headers["Content-Type"] = "text/html"
 		return response
 	print(json.dumps(data, indent=2))
 	return "OK"
