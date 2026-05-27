@@ -1,0 +1,15 @@
+#! /usr/bin/python3
+
+import os
+import sys
+
+from app.alba import Territory
+
+territory = Territory(sys.argv[1])
+
+for address in territory.addresses:
+	print(address)
+
+for marker in territory.markers:
+	print(marker)
+

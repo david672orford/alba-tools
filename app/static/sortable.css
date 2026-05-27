@@ -1,0 +1,30 @@
+/* This is a cut-down version of the sample stylesheet */
+
+.sortable th {
+  cursor: pointer;
+}
+
+.sortable th::after {
+  content: ' \025B8';		/* right arrow */
+}
+
+.sortable th.dir-d::after {
+  color: inherit;
+  content: ' \025BE';		/* down arrow */
+}
+
+.sortable th.dir-u::after {
+  color: inherit;
+  content: ' \025B4';		/* up arrow */
+}
+
+/* Exclude first column */
+.sortable th:first-child {
+  pointer-events: none;
+  }
+.sortable th:first-child::after {
+  content: "";
+  }
+.sortable td:first-child::after {
+  content: "";
+  }
