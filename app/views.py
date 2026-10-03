@@ -1,10 +1,12 @@
-from flask import request, render_template, redirect, flash, make_response
 import csv
 from io import StringIO
 import re
-import json
+from traceback import print_exc
+
+from flask import request, render_template, redirect, flash, make_response
+
 from . import app
-from .alba import Territory
+from .alba import AlbaTerritory
 
 @app.route("/")
 def view_index():
@@ -15,15 +17,16 @@ def view_index():
 def view_download():
 	url = request.args.get("url")
 	try:
-		territory = Territory(url)
+		territory = AlbaTerritory(url)
 	except Exception as e:
+		print_exc()
 		flash("Exception: %s" % e)
 		return redirect(".")
 	out_buffer = StringIO()
 	header = ["Status", "Last", "First", "Phone", "Address", "City", "State", "ZIP", "Notes"]
 	out = csv.DictWriter(out_buffer, fieldnames=header, quoting=csv.QUOTE_ALL)
 	out.writeheader()
-	for address in territory.addresses:
+	for address in territory:
 		last_name, first_name = parse_name(address.name)
 
 		formatted_address = "%s %s" % (address.house_number, address.street)
@@ -48,6 +51,8 @@ def view_download():
 	return response
 
 def parse_name(name):
+	"""Separate the given name and surname"""
+
 	if name is None:
 		return ("", "")
 
@@ -68,22 +73,44 @@ def parse_name(name):
 def view_print():
 	url = request.args.get("url")
 	try:
-		territory = Territory(url, load_all=True)
-		territory.per_page = 30
+		territory = AlbaTerritory(url)
 	except Exception as e:
 		#raise
 		flash("Сбой: %s" % e)
 		return redirect(".")
-	return render_template("print.html", territory=territory)
+	pager = Pager(territory)
+	pager.per_page = 30
+	return render_template("print.html", territory=territory, pager=pager)
+
+class Pager:
+	def __init__(self, entries:list):
+		self.per_page = 25
+		self.entries = entries
+
+	def npages(self):
+		npages = int((len(self.entries) + self.per_page - 1) / self.per_page)
+		return npages
+
+	def pages(self):
+		entries = self.entries
+		while len(entries) > self.per_page:
+			yield entries[:self.per_page]
+			entries = entries[self.per_page:]
+		if len(entries) > 0:
+			fill_obj = type(self.entries[0])
+			while len(entries) < self.per_page:
+				entries.append(fill_obj())
+			yield entries
 
 # Get the territory from Alba, return a table of addresses with links
 # to an online directory.
 @app.route("/research")
 def view_research():
-	url = request.args.get('url')
+	url = request.args.get("url")
 	try:
-		territory = Territory(url, load_all=True)
+		territory = AlbaTerritory(url)
 	except Exception as e:
+		print_exc()
 		flash("Exception: %s" % e)
 		return redirect(".")
 	return render_template("research.html", territory=territory)
@@ -91,8 +118,8 @@ def view_research():
 # Get the territory from Alba, return the border polygon in JSON format
 @app.route("/json")
 def view_json():
-	url = request.args.get('url')
-	territory = Territory(url)
+	url = request.args.get("url")
+	territory = AlbaTerritory(url)
 	return {
 		"number": territory.number,
 		"description": territory.description,
@@ -101,15 +128,15 @@ def view_json():
 		"border": territory.border
 		}
 
-@app.route("/edit")
-def view_edit():
-	assert request.args.get("territory")
-	assert request.args.get("cmd") in ("new","add","edit","save")
-	data = Territory.get(Territory.ajax_url, request.args)
-	if request.args.get("cmd") in ("new","edit"):
-		response = make_response(data["data"]["address"])
-		response.headers["Content-Type"] = "text/html"
-		return response
-	print(json.dumps(data, indent=2))
-	return "OK"
-
+# FIXME: Not yet ported to the May 2026 Alba
+#@app.route("/edit")
+#def view_edit():
+#	assert request.args.get("territory")
+#	assert request.args.get("cmd") in ("new","add","edit","save")
+#	data = AlbaTerritory.get_data(AlbaTerritory.ajax_url, request.args)
+#	if request.args.get("cmd") in ("new","edit"):
+#		response = make_response(data["data"]["address"])
+#		response.headers["Content-Type"] = "text/html"
+#		return response
+#	print(json.dumps(data, indent=2))
+#	return "OK"

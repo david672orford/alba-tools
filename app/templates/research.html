@@ -130,14 +130,14 @@ A, .addressid {
 		</tr>
 	</thead>
 	<tbody>
-		{% for address in territory.addresses %}
+		{% for address in territory %}
 		{% if address.status not in ("Invalid", "Moved") %}
-		<tr class="{{address.status_class()}}">
+		<tr class="{{address.status|status_class}}">
 			<td>{% if address.marker %}{{address.marker}}{% else %}&nbsp;{% endif %}</td>
-			<td class="addressid">{{address.id}}</td>
+			<td class="addressid">{{address.alba_id}}</td>
 			<td>{{address.status}}</td>
 			<td>{{address.language}}</td>
-			<td>{{address.name}}{{ search_names(address) }}</td>
+			<td>{{address.name}}{{search_names(address)}}</td>
 			<td>{{search_house(address)}}</td>
 			<td>{{address.street}}</td>
 			<td>{{address.apartment}}</td>
@@ -149,7 +149,7 @@ A, .addressid {
 			<td>
 				{% if address.status == 'Not valid' %}Не говорят на русском{% endif %}
 				{{address.notes}}
-			</td>	
+			</td>
 		</tr>
 		{% endif %}
 		{% endfor %}

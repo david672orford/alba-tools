@@ -96,14 +96,14 @@ TH, TD {
 	}
 
 TH:nth-child(1) {				/* Symbol */
-	width: .25in; 
+	width: .25in;
 	}
 TD:nth-child(1) {
 	text-align: center;
 	}
 
 TH:nth-child(2) {				/* Status */
-	width: .50in;	
+	width: .50in;
 	}
 
 TH:nth-child(3) {				/* Name */
@@ -169,7 +169,7 @@ TR.strikeout TD:last-child:before {
 
 {% macro footer(page_number) %}
 	<div class="footer">
-		<span>{{ page_number }} из {{ territory.npages() + 1 }}</span>
+		<span>{{ page_number }} из {{ pager.npages() + 1 }}</span>
 		<span>{{ territory.description }}</span>
 	</div>
 {% endmacro %}
@@ -182,7 +182,7 @@ TR.strikeout TD:last-child:before {
 	{{ footer(1) }}
 </div>
 
-{% for page in territory.pages() %}
+{% for page in pager.pages() %}
 <div class="page">
 	{{ header(loop.index + 1) }}
 	<div class="main">
@@ -205,7 +205,7 @@ TR.strikeout TD:last-child:before {
 		</thead>
 		<tbody>
 			{% for address in page %}
-			<tr class="{{address.status_class()}}">
+			<tr class="{{address.status|status_class}}">
 				<td>{% if address.marker %}{{address.marker}}{% else %}&nbsp;{% endif %}</td>
 				<td>{{address.status}}</td>
 				<td>{{address.name}}</td>
@@ -218,18 +218,18 @@ TR.strikeout TD:last-child:before {
 				<td>{{address.postal_code}}</td>
 				<td>{{address.phone}}</td>
 				<td>
-					{% if address.status == 'Valid' %}
-					{% elif address.status == 'Not valid' %}
+					{% if address.status == "Valid" %}
+					{% elif address.status == "Not valid" %}
 						Не говорят на русском
-					{% elif address.status == 'Moved' %}
+					{% elif address.status == "Moved" %}
 						Уехали
-					{% elif address.status == 'Do not call' %}
+					{% elif address.status == "Do not call" %}
 						Категорический отказ
 					{% else %}
 						{{address.status}}
 					{% endif %}
 					{{address.notes}}
-				</td>	
+				</td>
 			</tr>
 			{% endfor %}
 		</tbody>

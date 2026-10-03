@@ -2,7 +2,8 @@
 
 # For Apache Mod_Wsgi
 if __name__.startswith("_mod_wsgi_"):
-	import os, sys
+	import os
+	import sys
 	sys.path.insert(0, os.path.dirname(__file__))
 
 from app import app
