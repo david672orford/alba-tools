@@ -37,7 +37,7 @@ status_enum = Enum({
 
 language_enum = Enum({
 	"None": 0,
-	#"Russian": 2,
+	#"Russian": 2,		# disabled because now loaded from Alba's response
 	#"French": 3,
 	#"English": 10,
 	#"Spanish": 16,
@@ -77,8 +77,11 @@ class AlbaAddress:
 		# Split address into house number and street
 		if self.address is not None:
 			m = re.match(r"^(\d+\S*)\s+(.+)$", self.address)
-			assert m, self.address
-			self.house_number, self.street = m.groups()
+			if m:
+				self.house_number, self.street = m.groups()
+			else:
+				self.house_number = ""
+				self.street = self.address
 		elif "house_number" in kwargs and "street" in kwargs:
 			self.house_number = kwargs["house_number"]
 			self.street = kwargs["street"]

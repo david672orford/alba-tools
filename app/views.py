@@ -37,7 +37,7 @@ def view_download():
 			Status = address.status,
 			Last = last_name,
 			First = first_name,
-			Phone = address.phone,
+			Phone = address.telephone,
 			Address = formatted_address,
 			City = address.city,
 			State = address.state,
