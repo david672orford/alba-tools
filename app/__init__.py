@@ -28,6 +28,6 @@ def phoneencode_filter(s):
 
 @app.template_filter("status_class")
 def status_class(s):
-	return "strikeout" if self.status not in ("Valid", "New", "") else ""
+	return "strikeout" if s not in ("Valid", "New", "") else ""
 
 from . import views

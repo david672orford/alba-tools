@@ -35,7 +35,7 @@ DIV.page {
 	width: 10.5in;
 	height: 8.0in;
 
-	border: thin dotted green;	/* for debugging */
+	/*border: thin dotted green;*/	/* for debugging */
 	page-break-after: always;
 	}
 DIV.page, DIV.page > * {
@@ -205,6 +205,7 @@ TR.strikeout TD:last-child:before {
 		</thead>
 		<tbody>
 			{% for address in page %}
+			{% if address %}
 			<tr class="{{address.status|status_class}}">
 				<td>{% if address.marker %}{{address.marker}}{% else %}&nbsp;{% endif %}</td>
 				<td>{{address.status}}</td>
@@ -231,6 +232,20 @@ TR.strikeout TD:last-child:before {
 					{{address.notes}}
 				</td>
 			</tr>
+			{% else %}
+			<tr>
+				<td>&nbsp;</td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+			</tr>
+			{% endif %}
 			{% endfor %}
 		</tbody>
 	</table>

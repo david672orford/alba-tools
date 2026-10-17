@@ -75,10 +75,10 @@ def view_print():
 	try:
 		territory = AlbaTerritory(url)
 	except Exception as e:
-		#raise
 		flash("Сбой: %s" % e)
 		return redirect(".")
-	pager = Pager(territory)
+	to_visit = list(filter(lambda address: address.status in ("Valid","New"), territory))
+	pager = Pager(to_visit)
 	pager.per_page = 30
 	return render_template("print.html", territory=territory, pager=pager)
 
@@ -99,7 +99,8 @@ class Pager:
 		if len(entries) > 0:
 			fill_obj = type(self.entries[0])
 			while len(entries) < self.per_page:
-				entries.append(fill_obj())
+				#entries.append(fill_obj())
+				entries.append(None)
 			yield entries
 
 # Get the territory from Alba, return a table of addresses with links
